@@ -18,7 +18,7 @@ pub mod solana_gifs {
 
         let item = ItemStruct{
             gif_link: gif_link.to_string(),
-            user_address: *user.to_account_info().key,
+            user_address: *user.to_account_info().key
         };
         
         base_account.gif_list.push(item);
