@@ -1,0 +1,15 @@
+[features]
+seeds = false
+skip-lint = false
+[programs.devnet]
+solana_gifs = "8yp2WTzZLgozzsGTEJ1LkeRCjTSH3ERwqY2UYE3m2LG"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "devnet"
+wallet = "/Users/rajatwankhede/.config/solana/id.json"
+
+[scripts]
+test = "node tests/solana-gifs.js"
