@@ -2,11 +2,16 @@ import React, {useState, useEffect} from 'react';
 import './App.css';
 import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
 import {Program, Provider, web3} from "@project-serum/anchor";
-import storedIdl from "./assets/solana_gifs.json"
+import storedIdl from "./assets/solana_gifs.json";
+import kp from "./keypair.json";
+import upvoteLike from "./assets/like.png";
+import {AiOutlineHeart, AiFillHeart} from "react-icons/ai"
 
 const {SystemProgram, Keypair} = web3;
 
-let baseAccount = Keypair.generate();
+const arr = Object.values(kp._keypair.secretKey);
+const secret = new Uint8Array(arr);
+const baseAccount = web3.Keypair.fromSecretKey(secret);
 
 const programID = new PublicKey(storedIdl.metadata.address);
 
@@ -75,6 +80,10 @@ const App = () => {
     setInputValue(value);
   };
 
+  const upvoteGif = async() => {
+    console.log("upvote done");
+  } 
+
   const renderConnectedContainer = () => {
     if(gifList == null) {
       return <div className="connected-container">
@@ -93,11 +102,17 @@ const App = () => {
       <input type="text" placeholder="Enter gif link!" value={inputValue}
       onChange={onInputChange} />
       <button type="submit" onClick={sendGif} className="cta-button submit-gif-button">Submit</button>
+     
     </form>
       <div className="gif-grid">
         {gifList.map((item, index) => (
           <div className="gif-item" key={index}>
-            <img src={item.gifLink} alt={item.gifLink} />
+            <img src={item.gifLink} alt={item.gifLink} className="gifImg" />
+            <p className={"userAddressPara"}>{item.userAddress.toString()}</p>
+            <div className="upvoteBtnDiv" onClick={upvoteGif}>
+              <AiOutlineHeart color='#fff' size={30} />
+              <span></span>
+            </div>
           </div>
         ))}
       </div>
@@ -120,7 +135,7 @@ const App = () => {
       const provider = getProvider();
       const program = await getProgram();
 
-      await program.rpc.startOffStuff({
+      await program.rpc.startStuffOff({
         accounts: {
           baseAccount: baseAccount.publicKey,
           user: provider.wallet.publicKey,
@@ -128,20 +143,32 @@ const App = () => {
         },
         signers: [baseAccount]
       });
-      // await getGifList();
-      // console.log("init", await program)
+      await getGifList();
     } catch (error) {
       console.log(error)
     }
   }
 
   const sendGif = async () => {
-    if (inputValue.length > 0) {
-      console.log('Gif link:', inputValue);
-      setGifList([...gifList, inputValue]);
-      setInputValue('');
-    } else {
-      console.log('Empty input. Try again.');
+    if (inputValue.length === 0) {
+      console.log("No gif link given!!");
+      return
+    } 
+    setInputValue("");
+    console.log("Gif Link: ", inputValue);
+    try {
+      const provider = await getProvider();
+      const program = await getProgram();
+
+      await program.rpc.addGifs(inputValue, {
+        accounts: {
+          baseAccount: baseAccount.publicKey,
+          user: provider.wallet.publicKey
+        }
+      });
+      await getGifList();
+    } catch (error) {
+      console.log(error)
     }
   };
 
@@ -160,7 +187,7 @@ const App = () => {
 
       console.log("Got the account", account);
 
-      // setGifList(account.gifList);
+      setGifList(account.gifList);
     } catch(err) {
       console.log(err);
       setGifList(null);
@@ -170,7 +197,7 @@ const App = () => {
   useEffect(() => {
     if (walletAddress) {
       console.log('Fetching GIF list...');
-      // getGifList();
+      getGifList();
     }
   }, [walletAddress]);
 

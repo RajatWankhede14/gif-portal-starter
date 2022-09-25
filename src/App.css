@@ -105,8 +105,8 @@
   align-self: center;
 }
 
-.gif-item img {
-  width: 100%;
+.gifImg {
+  width: 600px;
   height: 300px;
   border-radius: 10px;
   object-fit: cover;
@@ -129,3 +129,20 @@
 .connected-container button {
   height: 50px;
 }
+
+.userAddressPara {
+  color: #fff;
+}
+
+.upvoteBtnDiv {
+  position: absolute;
+  right: 25px;
+  top: 20px;
+}
+
+.upvoteBtn {
+  height: 30px;
+  object-fit: contain;
+}
+
+
