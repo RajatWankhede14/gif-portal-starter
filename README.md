@@ -1,5 +1,7 @@
 # buildspace Solana GIF Portal Project
 
+#This App is deployed on Vercel ->> https://gif-portal-starter-teal-iota.vercel.app/
+
 ### **Welcome 👋**
 To get started with this course, clone this repo and follow these commands:
 
